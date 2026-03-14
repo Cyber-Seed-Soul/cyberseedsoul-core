@@ -15,15 +15,6 @@ import { SITE } from "./src/config";
 export default defineConfig({
   site: SITE.website,
   
-  // SECURITY BLOCK
-  security: {
-    checkOrigin: false,
-    allowedDomains: [
-      { hostname: 'cyberseedsoul.in' },
-      { hostname: 'www.cyberseedsoul.in' }
-    ]
-  },
-
   integrations: [
     sitemap({
       filter: page => SITE.showArchives || !page.endsWith("/archives"),
@@ -45,20 +36,11 @@ export default defineConfig({
     },
   },
 
-  // THE MERGED VITE BLOCK
+  // We only need the Tailwind plugin here now
   vite: {
-    preview: {
-      allowedHosts: true
-    },
-    server: {
-      allowedHosts: true
-    },
     // eslint-disable-next-line
     // @ts-ignore
     plugins: [tailwindcss()],
-    optimizeDeps: {
-      exclude: ["@resvg/resvg-js"],
-    },
   },
 
   image: {
