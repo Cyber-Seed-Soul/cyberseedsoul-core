@@ -48,10 +48,10 @@ export default defineConfig({
   // THE MERGED VITE BLOCK
   vite: {
     preview: {
-      allowedHosts: ['cyberseedsoul.in', 'www.cyberseedsoul.in']
+      allowedHosts: true
     },
     server: {
-      allowedHosts: ['cyberseedsoul.in', 'www.cyberseedsoul.in']
+      allowedHosts: true
     },
     // eslint-disable-next-line
     // @ts-ignore
