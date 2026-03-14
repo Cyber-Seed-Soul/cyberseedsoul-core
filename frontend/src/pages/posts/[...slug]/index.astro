@@ -1,0 +1,34 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import PostDetails from "@/layouts/PostDetails.astro";
+import getSortedPosts from "@/utils/getSortedPosts";
+import { getPath } from "@/utils/getPath";
+import fetchStrapiPosts from "@/utils/fetchStrapiPosts";
+
+export interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+export async function getStaticPaths() {
+  const localPosts = await getCollection("blog", ({ data }) => !data.draft);
+  const strapiPosts = await fetchStrapiPosts();
+  const posts = [...localPosts, ...strapiPosts] as any[];
+
+  const postResult = posts.map((post: any) => ({
+    // FIX: Astro v5 uses 'id' instead of 'slug'. We mapped Strapi to use this too!
+    params: { slug: post.filePath ? getPath(post.id, post.filePath, false) : post.id },
+    props: { post },
+  }));
+
+  return postResult;
+}
+
+const { post } = Astro.props;
+
+const localPostsAll = await getCollection("blog");
+const strapiPostsAll = await fetchStrapiPosts();
+const allPosts = [...localPostsAll, ...strapiPostsAll] as any[];
+const sortedPosts = getSortedPosts(allPosts);
+---
+
+<PostDetails post={post} posts={sortedPosts} />

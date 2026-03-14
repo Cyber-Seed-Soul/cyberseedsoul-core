@@ -1,0 +1,40 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import Main from "@/layouts/Main.astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Card from "@/components/Card.astro";
+import Pagination from "@/components/Pagination.astro";
+import getSortedPosts from "@/utils/getSortedPosts";
+import { SITE } from "@/config";
+
+// 1. Import your CMS fetcher
+import fetchStrapiPosts from "@/utils/fetchStrapiPosts";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  // 2. Fetch local posts (if any) and Strapi posts, then combine them
+  const localPosts = await getCollection("blog", ({ data }) => !data.draft);
+  const strapiPosts = await fetchStrapiPosts();
+  const posts = [...localPosts, ...strapiPosts] as any[];
+
+  // 3. Paginate the combined list
+  return paginate(getSortedPosts(posts), { pageSize: SITE.postPerPage });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<Layout title={`Posts | ${SITE.title}`}>
+  <Header />
+  <Main pageTitle="Posts" pageDesc="All the articles I've posted.">
+    <ul>
+      {page.data.map((data: any) => <Card {...data} />)}
+    </ul>
+  </Main>
+
+  <Pagination {page} />
+
+  <Footer noMarginTop={page.lastPage > 1} />
+</Layout>

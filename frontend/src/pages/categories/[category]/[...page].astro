@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPathsOptions } from "astro";
+import Main from "@/layouts/Main.astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Card from "@/components/Card.astro";
+import Pagination from "@/components/Pagination.astro";
+import { SITE } from "@/config";
+import fetchStrapiPosts from "@/utils/fetchStrapiPosts";
+import { slugifyStr } from "@/utils/slugify";
+import getSortedPosts from "@/utils/getSortedPosts";
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const localPosts = await getCollection("blog", ({ data }) => !data.draft);
+  const strapiPosts = await fetchStrapiPosts();
+  const posts = [...localPosts, ...strapiPosts] as any[];
+
+  const categories = [...new Set(posts.map(post => post.data.category).filter(Boolean))];
+
+  return categories.flatMap(category => {
+    // Get all posts for this specific category
+    const categoryPosts = getSortedPosts(posts.filter(post => post.data.category === category));
+
+    return paginate(categoryPosts, {
+      params: { category: slugifyStr(category) },
+      props: { categoryName: category },
+      pageSize: SITE.postPerPage,
+    });
+  });
+}
+
+const params = Astro.params;
+const { category } = params;
+const { page, categoryName } = Astro.props;
+---
+
+<Layout title={`Category: ${categoryName} | ${SITE.title}`}>
+  <Header />
+  <Main
+    pageTitle={[`Category:`, `${categoryName}`]}
+    titleTransition={category}
+    pageDesc={`All the articles in the "${categoryName}" category.`}
+  >
+    <h1 slot="title" transition:name={category}>{`Category: ${categoryName}`}</h1>
+    <ul>
+      {page.data.map((data: any) => <Card {...data} />)}
+    </ul>
+  </Main>
+
+  <Pagination {page} />
+
+  <Footer noMarginTop={page.lastPage > 1} />
+</Layout>
