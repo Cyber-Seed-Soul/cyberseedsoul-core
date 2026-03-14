@@ -14,6 +14,14 @@ import { SITE } from "./src/config";
 // https://astro.build/config
 export default defineConfig({
   site: SITE.website,
+  // ADD THIS SECURITY BLOCK:
+  security: {
+    checkOrigin: false,
+    allowedDomains: [
+      { hostname: 'cyberseedsoul.in' },
+      { hostname: 'www.cyberseedsoul.in' }
+    ]
+  },
   integrations: [
     sitemap({
       filter: page => SITE.showArchives || !page.endsWith("/archives"),
