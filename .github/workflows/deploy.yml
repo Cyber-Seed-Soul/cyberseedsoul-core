@@ -1,0 +1,38 @@
+name: Deploy to AWS Production
+
+on:
+  push:
+    branches:
+      - main # The robot watches this branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into AWS and Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "Starting Deployment..."
+            
+            # 1. Enter the directory
+            cd /home/ubuntu/cyberseedsoul-core
+            
+            # 2. Pull the latest code from GitHub
+            git pull origin main
+            
+            # 3. Backend: Install new packages and restart
+            cd backend
+            npm install
+            pm2 restart strapi-backend
+            
+            # 4. Frontend: Install, Rebuild (to fetch new data), and restart
+            cd ../frontend
+            npm install
+            npm run build
+            pm2 restart astro-frontend
+            
+            echo "Deployment Successful!"
