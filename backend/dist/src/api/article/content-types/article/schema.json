@@ -33,7 +33,7 @@
             "targetField": "Title"
         },
         "Content": {
-            "type": "blocks",
+            "type": "richtext",
             "pluginOptions": {
                 "i18n": {
                     "localized": true
