@@ -1,4 +1,4 @@
-name: Deploy Pre-built Astro to GitHub Pages
+name: Build and Deploy Astro to GitHub Pages
 
 on:
   push:
@@ -16,13 +16,24 @@ jobs:
     environment:
       name: github-pages
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install and Build Astro
+        run: |
+          cd frontend
+          npm install
+          npm run build
 
       - name: Upload static files
         uses: actions/upload-pages-artifact@v3
         with:
-          # Points to the pre-built folder you pushed
+          # Points to the freshly built folder!
           path: ./frontend/dist 
 
       - name: Deploy to GitHub Pages
