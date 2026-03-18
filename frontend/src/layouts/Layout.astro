@@ -166,11 +166,34 @@ const structuredData = {
         };
       })();
     </script>
-  </head>
+    <style>
+      /* Completely disable text highlighting */
+      body {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+      }
+    </style>
+
+    <script is:inline>
+      // 1. Disable the Right-Click Context Menu
+      document.addEventListener('contextmenu', event => event.preventDefault());
+
+      // 2. Disable Ctrl+C, Ctrl+A, Ctrl+X (and Mac equivalents)
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          if (e.key.toLowerCase() === 'c' || e.key.toLowerCase() === 'a' || e.key.toLowerCase() === 'x' || e.key.toLowerCase() === 'p') {
+            e.preventDefault();
+          }
+        }
+      });
+    </script>
+  </head>    
   <body>
     <slot />
 
     <!-- Load full theme logic -->
     <script src="../scripts/theme.ts"></script>
+
   </body>
 </html>

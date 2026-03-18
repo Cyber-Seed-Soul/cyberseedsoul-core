@@ -1,0 +1,21 @@
+# Allow regular search engines (Google, Bing) to index the site for SEO
+User-agent: *
+Allow: /
+
+# Block AI and LLM Crawlers from scraping data
+User-agent: GPTBot
+Disallow: /
+User-agent: ChatGPT-User
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: Claude-Web
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+User-agent: OmgiliBot
+Disallow: /
+User-agent: FacebookBot
+Disallow: /
